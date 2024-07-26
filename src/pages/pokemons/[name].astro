@@ -1,0 +1,71 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { PokemonListResponse } from "../../interfaces/pokemon-list.tesponse";
+
+import MainLayouts from "../../layouts/MainLayouts.astro";
+import PokemonCard from "../../pokemons/PokemonCard.astro";
+
+// rutas existentes, para sitios estaticos
+export const getStaticPaths = (async () => {
+  const resp = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+  const { results } = (await resp.json()) as PokemonListResponse;
+  // console.log("🚀 ~ getStaticPaths ~ results:", results);
+
+  // rutas dinamicas
+  return results.map((pokemon) => ({
+    params: { name: pokemon.name },
+    props: {
+      name: pokemon.name,
+      url: pokemon.url,
+    },
+  }));
+
+  // manual
+  /* return [
+    {
+      params: { name: "bulbasaur" },
+      // estas serian las properias de cada pagina
+      props: {
+        name: "bulbasaur",
+        url: "https://pokeapi.co/api/v2/pokemon/1/",
+      },
+    },
+    {
+      params: { name: "charmander" },
+      props: {
+        name: "charmander",
+        url: "https://pokeapi.co/api/v2/pokemon/4/",
+      },
+    },
+  ]; */
+}) satisfies GetStaticPaths;
+
+// accedo a los params de la url
+const { name } = Astro.params;
+const { url } = Astro.props;
+
+const id = url.split("/").at(-2);
+const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+---
+
+<MainLayouts title="Pokemon">
+  <section class="mt-10 flex flex-col justify-center items-center">
+    <div>
+      <a href="/">Regresar</a>
+      <h1 class="text-5xl capitalize">{name}</h1>
+    </div>
+
+    <!-- isBig={true} a esta prop no hace falta ponerle true, si no le mandamos nada es como si fuera con el true -->
+    <PokemonCard name={name} url={url} isBig />
+
+    <audio controls class="mt-5">
+      <source src={audioSrc} type="audio/ogg" />
+    </audio>
+  </section>
+</MainLayouts>
+
+<style>
+  a {
+    @apply text-blue-500 hover:underline;
+  }
+</style>
