@@ -17,8 +17,10 @@ const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
     { border: !isBig },
   ]}
 >
+  <!-- https://docs.astro.build/en/guides/view-transitions/#naming-a-transition -->
   <img
-    class:list={[{ "w-16 h-16": !isBig }, { "w-26 h-26": isBig }]}
+    transition:name={`${name}-image`}
+    class:list={[{ "w-22 h-22": !isBig }, { "w-26 h-26": isBig }]}
     src={imageUrl}
     alt={name}
   />
