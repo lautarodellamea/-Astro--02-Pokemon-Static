@@ -2,8 +2,8 @@
 // Código Server Side Only - Momento de construccion (BUILD TIME)
 import type { PokemonListResponse } from "../interfaces/pokemon-list.tesponse";
 
-import MainLayouts from "../layouts/MainLayouts.astro";
-import PokemonCard from "../pokemons/PokemonCard.astro";
+import MainLayout from "../layouts/MainLayout.astro";
+import PokemonCard from "@components/pokemons/PokemonCard.astro";
 
 const resp = await fetch("https://pokeapi.co/api/v2/pokemon");
 const data = (await resp.json()) as PokemonListResponse;
@@ -11,7 +11,7 @@ const data = (await resp.json()) as PokemonListResponse;
 const title = "Pokemon Static | Home";
 ---
 
-<MainLayouts title={title}>
+<MainLayout title={title}>
   <h1 class="text-3xl">Listado de Pokémons</h1>
 
   <section
@@ -24,4 +24,4 @@ const title = "Pokemon Static | Home";
       ))
     }
   </section>
-</MainLayouts>
+</MainLayout>

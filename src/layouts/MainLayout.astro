@@ -1,0 +1,53 @@
+---
+import ViewTransitions from "astro/components/ViewTransitions.astro";
+import { siteInfo } from "src/consts/site-info";
+
+interface Props {
+  title?: string;
+  image?: string;
+  description?: string;
+}
+
+const { title = siteInfo.title, image = siteInfo.image, description= siteInfo.description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+
+
+    <!-- SEO -->
+    <meta name="description" content={description} />
+    <meta name="author" content="Lautaro Della Mea" />
+
+    <!-- Open Graph Metatags -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <!-- <meta property="og:type" content="website" /> -->
+    <!-- <meta property="og:url" content={Astro.url} /> -->
+
+    <title>{title}</title>
+
+    <!-- https://astro.build/blog/future-of-astro-zero-js-view-transitions/?tw -->
+    <ViewTransitions />
+
+    <!-- para aplcar las view transitions basadas en css (zero js) -->
+    <!-- no es compatible en algunos navegadores por el momento-->
+    <!-- <style>
+      @view-transition {
+        navigation: auto; /* enabled! */
+      }
+    </style> -->
+  </head>
+  <body class="bg-slate-800 text-slate-100 m-auto max-w-3xl">
+    <main class="mt-10">
+      <slot />
+    </main>
+  </body>
+</html>
+
+

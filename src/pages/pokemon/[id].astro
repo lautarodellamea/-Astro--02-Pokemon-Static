@@ -1,0 +1,66 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { PokemonListResponse } from "../../interfaces/pokemon-list.tesponse";
+
+import MainLayout from "../../layouts/MainLayout.astro";
+
+// Path relativo
+// import PokemonCard from "../../pokemons/PokemonCard.astro";
+
+// Path absoluto
+// import PokemonCard from "src/pokemons/PokemonCard.astro";
+
+// Path alias
+import PokemonCard from "@components/pokemons/PokemonCard.astro";
+
+
+export const getStaticPaths = ( async() => {
+    const resp = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
+    const { results } = (await resp.json()) as PokemonListResponse;
+    
+
+    return results.map((pokemon) => {
+      const id = pokemon.url.split("/").at(-2);
+
+      return {
+        params: { id: id },
+        props: {
+          name: pokemon.name,
+          url: pokemon.url,
+        },
+      };
+    })
+
+}) satisfies GetStaticPaths;
+
+const { id } = Astro.params;
+const { name, url } = Astro.props;
+
+const audioSrc = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+
+---
+
+
+<MainLayout title="Pokemon">
+
+    <section class="mt-10 flex flex-col justify-center items-center">
+        <div>
+          <a href="/">Regresar</a>
+          <h1 class="text-5xl capitalize">{name}</h1>
+        </div>
+    
+        <!-- isBig={true} a esta prop no hace falta ponerle true, si no le mandamos nada es como si fuera con el true -->
+        <PokemonCard name={name} url={url} isBig />
+    
+        <audio controls class="mt-5">
+          <source src={audioSrc} type="audio/ogg" />
+        </audio>
+      </section>
+</MainLayout>
+
+
+<style>
+    a {
+      @apply text-blue-500 hover:underline;
+    }
+  </style>
