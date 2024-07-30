@@ -2,8 +2,11 @@
 import type { GetStaticPaths } from "astro";
 import type { PokemonListResponse } from "@interfaces/pokemon-list.tesponse";
 
+import { Icon } from "astro-icon/components";
+
 import MainLayout from "@layouts/MainLayout.astro";
 import PokemonCard from "@components/pokemons/PokemonCard.astro";
+import Title from "@components/shared/Title.astro";
 
 // rutas existentes, para sitios estaticos
 export const getStaticPaths = (async () => {
@@ -55,9 +58,23 @@ const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
   image={imageSrc}
 >
   <section class="mt-10 flex flex-col justify-center items-center">
-    <div>
-      <a href="/">Regresar</a>
-      <h1 class="text-5xl capitalize">{name}</h1>
+    <div class="flex flex-row">
+      <div>
+        <!-- <a href="/">Regresar</a> -->
+        <button onclick="history.back()" class="text-blue-500">Regresar</button>
+        <Title>{name}</Title>
+      </div>
+
+      <button id="btn-favorite" class={"ml-5"} data-name={name} data-id={id}>
+        <Icon data-outline name="heart-outline" size={50} color={"#ff0000"} />
+        <Icon
+          data-full
+          class="hidden"
+          name="heart-full"
+          size={50}
+          color={"#ff0000"}
+        />
+      </button>
     </div>
 
     <!-- isBig={true} a esta prop no hace falta ponerle true, si no le mandamos nada es como si fuera con el true -->
@@ -69,8 +86,95 @@ const imageSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
   </section>
 </MainLayout>
 
+<script>
+  // podemos usar ts en el script
+  // interface FavoritePokemon {
+  //   name: string;
+  //   id: number;
+  // }
+  import type { FavoritePokemon } from "@interfaces/favorite-pokemon";
+
+
+  // document.addEventListener("astro:before-preparation", () => {
+  //   console.log("astro:before-preparation");
+  // })
+  // document.addEventListener("astro:after-preparation", () => {
+  //   console.log("astro:after-preparation");
+  // })
+  // document.addEventListener("astro:before-swap", () => {
+  //   console.log("astro:before-swap");
+  // })
+  // document.addEventListener("astro:after-swap", () => {
+  //   console.log("astro:after-swap");
+  // })
+  // document.addEventListener("astro:page-load", () => {
+  //   console.log("astro:page-load");
+  // });
+
+  const handlePageLoad = () => {
+    let favoritePokemons: FavoritePokemon[] = JSON.parse(
+      localStorage.getItem("favorites") || "[]"
+    );
+    // console.log({ favoritePokemons });
+
+    const btnFavorite = document.querySelector(
+      "#btn-favorite"
+    ) as HTMLButtonElement;
+
+    if (!btnFavorite) return;
+
+    const name = btnFavorite.dataset.name ?? "";
+    const id = btnFavorite.dataset.id ?? "";
+    // console.log(name, id);
+
+    const heartOutline = btnFavorite.querySelector(
+      "[data-outline]"
+    ) as HTMLElement;
+    const heartFull = btnFavorite.querySelector("[data-full]") as HTMLElement;
+    const isFavorite = favoritePokemons.some((fav) => fav.name === name);
+
+
+    if ( isFavorite ) {
+      heartOutline.classList.add("hidden");
+      heartFull.classList.remove("hidden");
+    }
+
+
+    const toggleFavorite = () => {
+      const isFavorite = favoritePokemons.some((fav) => fav.name === name);
+
+      if (isFavorite) {
+        // remover
+        favoritePokemons = favoritePokemons.filter((fav) => fav.name !== name);
+      } else {
+        // agregar
+        favoritePokemons.push({ name: name, id: +id });
+      }
+
+      localStorage.setItem("favorites", JSON.stringify(favoritePokemons));
+    };
+
+
+    btnFavorite.addEventListener("click", () => {
+      // console.log({ name, id });
+
+      heartOutline.classList.toggle("hidden");
+      heartFull.classList.toggle("hidden");
+
+      toggleFavorite();
+    });
+  };
+
+  // https://docs.astro.build/en/guides/view-transitions/#lifecycle-events
+  document.addEventListener("astro:page-load", handlePageLoad);
+</script>
+
 <style>
   a {
     @apply text-blue-500 hover:underline;
+  }
+
+  #btn-favorite {
+    @apply hover:animate-pulse;
   }
 </style>
