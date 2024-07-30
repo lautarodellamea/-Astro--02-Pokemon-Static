@@ -1,6 +1,8 @@
 ---
 import ViewTransitions from "astro/components/ViewTransitions.astro";
 import { siteInfo } from "src/consts/site-info";
+import NavBar from "src/components/shared/NavBar.astro";
+
 
 interface Props {
   title?: string;
@@ -11,7 +13,7 @@ interface Props {
 const { title = siteInfo.title, image = siteInfo.image, description= siteInfo.description } = Astro.props;
 ---
 
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -43,8 +45,9 @@ const { title = siteInfo.title, image = siteInfo.image, description= siteInfo.de
       }
     </style> -->
   </head>
-  <body class="bg-slate-800 text-slate-100 m-auto max-w-3xl">
-    <main class="mt-10">
+  <body class="bg-slate-800 text-slate-100 flex flex-col min-h-screen">
+    <NavBar />
+    <main class="mt-10 mx-auto flex-grow w-full max-w-4xl px-4">
       <slot />
     </main>
   </body>

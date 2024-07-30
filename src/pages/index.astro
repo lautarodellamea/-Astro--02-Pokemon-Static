@@ -1,5 +1,6 @@
 ---
 // Código Server Side Only - Momento de construccion (BUILD TIME)
+import Title from "@components/shared/Title.astro";
 import type { PokemonListResponse } from "../interfaces/pokemon-list.tesponse";
 
 import MainLayout from "../layouts/MainLayout.astro";
@@ -12,7 +13,7 @@ const title = "Pokemon Static | Home";
 ---
 
 <MainLayout title={title}>
-  <h1 class="text-3xl">Listado de Pokémons</h1>
+  <Title>Listado de Pokémons</Title>
 
   <section
     aria-label="Listado de Pokémons"
